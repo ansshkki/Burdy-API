@@ -12,6 +12,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    
     /**
      * The attributes that are mass assignable.
      *
@@ -23,6 +24,9 @@ class User extends Authenticatable
         'password',
         'phone',
         'address',
+        'profile_img_url',
+        'whatsapp_url',
+        'facebook_url',
     ];
 
     /**
