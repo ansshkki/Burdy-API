@@ -21,16 +21,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 //Unprotected Routes
-Route::prefix('/user')->group(function(){
-    Route::post('/register',[AuthController::class,'register']);
-    Route::post('/login',[AuthController::class,'login']);
+Route::prefix('/user')->group(function () {
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
 });
 
 //Protected Routes
-Route::group(['middleware'=>['auth:sanctum']],function(){
-    Route::post('/user/logout',[AuthController::class,'logout']);
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::post('/user/logout', [AuthController::class, 'logout']);
 
-    Route::prefix('/products')->group(function(){
+    Route::prefix('/products')->group(function () {
         Route::get('/index', [ProductController::class, 'index']);
         Route::post('/store', [ProductController::class, 'store']);
         Route::get('/show/{product}', [ProductController::class, 'show']);

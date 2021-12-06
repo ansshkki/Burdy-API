@@ -61,7 +61,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        return response(Product::query()->find($product)->get(),200);
+        return response(Product::query()->find($product)->get(), 200);
 
     }
 
