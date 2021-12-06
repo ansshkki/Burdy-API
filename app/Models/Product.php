@@ -9,8 +9,7 @@ class Product extends Model
 {
     use HasFactory;
 
-    
-    
+
     protected $fillable = [
         'name',
         'image_url',
@@ -21,7 +20,17 @@ class Product extends Model
         'quantity',
         'user_id',
         'description',
-        
-        
+
+
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 }

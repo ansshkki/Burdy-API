@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,4 +29,12 @@ Route::prefix('/user')->group(function(){
 //Protected Routes
 Route::group(['middleware'=>['auth:sanctum']],function(){
     Route::post('/user/logout',[AuthController::class,'logout']);
+
+    Route::prefix('/products')->group(function(){
+        Route::get('/index', [ProductController::class, 'index']);
+        Route::post('/store', [ProductController::class, 'store']);
+        Route::get('/show/{product}', [ProductController::class, 'show']);
+        Route::put('/update/{product}', [ProductController::class, 'update']);
+        Route::delete('/destroy/{product}', [ProductController::class, 'destroy']);
+    });
 });

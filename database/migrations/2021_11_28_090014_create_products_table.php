@@ -18,7 +18,6 @@ class CreateProductsTable extends Migration
             $table->string('name');
             $table->string('description');
             $table->text('image_url');
-            //$table->string('category');
             $table->date('expiration_date');
             $table->integer('price');
             $table->text('periods');

@@ -21,9 +21,6 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('phone');
             $table->string('address');
-            $table->text('profile_img_url')->nullable();
-            $table->text('facebook_url')->nullable();
-            $table->text('whatsapp_url');
             $table->rememberToken();
             $table->timestamps();
         });
