@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -15,7 +16,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        return Category::all();
     }
 
     /**
@@ -26,7 +27,15 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $fields = $request->validate([
+            'name' => 'required|string'
+        ]);
+
+        Category::create([
+            'name' => $fields['name'],
+        ]);
+
+        return response(true, 201);
     }
 
     /**
@@ -37,7 +46,7 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        //
+        return response(Product::query()->findOrFail($category)->get(), 200);
     }
 
     /**
@@ -49,7 +58,12 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
-        //
+        $fields = $request->validate([
+            'name' => 'required|string'
+        ]);
+
+        Product::query()->find($category)->update($fields);
+        return response(true, 200);
     }
 
     /**
@@ -60,6 +74,7 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        Category::destroy($category);
+        return response(true, 200);
     }
 }

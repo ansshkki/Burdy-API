@@ -12,7 +12,7 @@ class AuthController extends Controller
     {
         $fields = $request->validate([
             'name' => 'required|string',
-            'email' => 'required|string|unique:users',
+            'email' => 'required|email|unique:users',
             'password' => 'required|string|confirmed',
             'address' => 'required|string',
             'phone' => 'required|string',
@@ -56,12 +56,18 @@ class AuthController extends Controller
             'user' => $user,
             'token' => $token,
         ];
-        return response()->json($response, 201);
+        return response()->json($response, 200);
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
-        auth()->user()->tokens()->delete();
+        //auth()->user()->tokens()->delete();
+        $request->user()->currentAccessToken()->delete();
         return ['message' => 'logged out'];
+    }
+
+    public function all()
+    {
+        return User::all();
     }
 }

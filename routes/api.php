@@ -20,13 +20,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-//Unprotected Routes
+    // Unprotected Routes
 Route::prefix('/user')->group(function () {
+    Route::get('/', [AuthController::class, 'all']);
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
 });
 
-//Protected Routes
+    // Protected Routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/user/logout', [AuthController::class, 'logout']);
 

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreProductRequest;
-use App\Http\Requests\UpdateProductRequest;
+
 use App\Models\Product;
+use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
 
@@ -23,11 +23,12 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param StoreProductRequest $request
+     * @param Request $request
      * @return Response
      */
-    public function store(StoreProductRequest $request)
+    public function store(Request $request)
     {
+
         $fields = $request->validate([
             'name' => 'required|string',
             'description' => 'required|string',
@@ -58,23 +59,24 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param Product $product
+     * @param  Product $product
      * @return Response
      */
     public function show(Product $product)
     {
-        return response(Product::query()->find($product)->get(), 200);
+
+        return response(Product::query()->findOrFail($product)->get(), 200);
 
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param UpdateProductRequest $request
+     * @param Request $request
      * @param Product $product
      * @return Response
      */
-    public function update(UpdateProductRequest $request, Product $product)
+    public function update(Request $request, Product $product)
     {
         $fields = $request->validate([
             'name' => 'required|string',
