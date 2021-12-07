@@ -38,4 +38,12 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::put('/update/{product}', [ProductController::class, 'update']);
         Route::delete('/destroy/{product}', [ProductController::class, 'destroy']);
     });
+
+    Route::prefix('/categories')->group(function () {
+        Route::get('/index', [ProductController::class, 'index']);
+        Route::post('/store', [ProductController::class, 'store']);
+        Route::get('/show/{product}', [ProductController::class, 'show']);
+        Route::put('/update/{product}', [ProductController::class, 'update']);
+        Route::delete('/destroy/{product}', [ProductController::class, 'destroy']);
+    });
 });
