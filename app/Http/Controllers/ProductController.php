@@ -31,27 +31,17 @@ class ProductController extends Controller
 
         $fields = $request->validate([
             'name' => 'required|string',
-            'description' => 'required|string',
             'image_url' => 'required|string',
             'expiration_date' => 'required|date',
-            'price' => 'required|numeric',
+            'price' => 'required|double',
             'periods' => 'required|JSON',
             'quantity' => 'required|numeric',
-            'user_id' => 'required|numeric',
-            'category_id' => 'required|numeric',
+            'category_id' => 'required|Numeric',
         ]);
-
-        Product::create([
-            'name' => $fields['name'],
-            'image_url' => $fields['image_url'],
-            'category_id' => $fields['category_id'],
-            'expiration_date' => $fields['expiration_date'],
-            'price' => $fields['price'],
-            'periods' => $fields['periods'],
-            'quantity' => $fields['quantity'],
-            'user_id' => $fields['user_id'],
-            'description' => $fields['description'],
-        ]);
+        $fields['user_id']= $request->user()->id;
+        //$fields['category_id']= ;
+        //return response($fields['periods']);
+        Product::create($fields);
 
         return response(true, 201);
     }
@@ -65,7 +55,7 @@ class ProductController extends Controller
     public function show(Product $product)
     {
 
-        return response(Product::query()->findOrFail($product)->get(), 200);
+        return response($product, 200);
 
     }
 
@@ -78,31 +68,36 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
+        //return $request->user();
+        if($request->user()->id!=$product->user_id){
+            return response()->json(['message'=> 'Unauthorized'],401);
+        }
         $fields = $request->validate([
-            'name' => 'required|string',
-            'description' => 'required|string',
-            'image_url' => 'required|string',
-            'expiration_date' => 'required|date',
-            'price' => 'required|numeric',
-            'periods' => 'required|JSON',
-            'quantity' => 'required|numeric',
-            'user_id' => 'required|numeric',
-            'category_id' => 'required|numeric',
+            'name' => 'string',
+            'image_url' => 'string',
+            'price' => 'numeric',
+            'periods' => 'JSON',
+            'quantity' => 'numeric',
         ]);
 
-        Product::query()->find($product)->update($fields);
-        return response(true, 200);
+        $product->update($fields);
+        return response(Product::find($product->id), 200);
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param Product $product
+     * @param Request $request
      * @return Response
      */
-    public function destroy(Product $product)
+    public function destroy(Product $product, Request $request)
     {
-        Product::destroy($product);
+        if($request->user()->id!=$product->user_id){
+            return response()->json(['message'=> 'Unauthorized'],401);
+        }
+        //$product->destroy();
+        Product::destroy($product->id);
         return response(true, 200);
     }
 }

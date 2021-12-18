@@ -20,7 +20,6 @@ class Product extends Model
         'periods',
         'quantity',
         'user_id',
-        'description',
     ];
 
     public function user()
