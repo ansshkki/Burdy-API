@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Product;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -31,16 +33,18 @@ class ProductController extends Controller
 
         $fields = $request->validate([
             'name' => 'required|string',
-            'image_url' => 'required|string',
             'expiration_date' => 'required|date',
-            'price' => 'required|double',
+            'price' => 'required|numeric',
             'periods' => 'required|JSON',
             'quantity' => 'required|numeric',
             'category_id' => 'required|Numeric',
         ]);
+        $request->validate(['image'=>'required|File']);
+        $images_url ='/storage/app/' ;
         $fields['user_id']= $request->user()->id;
-        //$fields['category_id']= ;
-        //return response($fields['periods']);
+        $path = $request->file('image')->
+            storeAs('images',time().'.'.$request->file('image')->getClientOriginalExtension());
+        $fields['image_url']=$images_url.$path;
         Product::create($fields);
 
         return response(true, 201);
@@ -74,10 +78,10 @@ class ProductController extends Controller
         }
         $fields = $request->validate([
             'name' => 'string',
-            'image_url' => 'string',
             'price' => 'numeric',
             'periods' => 'JSON',
             'quantity' => 'numeric',
+            'image'=>'File'
         ]);
 
         $product->update($fields);

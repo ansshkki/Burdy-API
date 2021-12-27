@@ -20,15 +20,31 @@ class Product extends Model
         'periods',
         'quantity',
         'user_id',
+        'views',
+        'comments',
+        'likes'
     ];
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class,'user_id');
+        
     }
+    /*public function likes()
+    {
+        return $this->hasMany();
+        
+    }
+
+    public function comments()
+    {
+        return $this->hasMany();
+        
+    }*/
+    
 
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class,'category_id');
     }
 }
