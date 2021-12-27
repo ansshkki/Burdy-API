@@ -8,8 +8,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class Product extends Model
 {
-    use HasFactory,HasApiTokens;
-
+    use HasFactory, HasApiTokens;
 
     protected $fillable = [
         'name',
@@ -27,24 +26,21 @@ class Product extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class,'user_id');
-        
+        return $this->belongsTo(User::class);
     }
+
     /*public function likes()
     {
         return $this->hasMany();
-        
     }
 
     public function comments()
     {
         return $this->hasMany();
-        
     }*/
-    
 
     public function category()
     {
-        return $this->belongsTo(Category::class,'category_id');
+        return $this->belongsTo(Category::class);
     }
 }
