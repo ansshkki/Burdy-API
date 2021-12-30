@@ -25,6 +25,17 @@ class Product extends Model
         'likes'
     ];
 
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'description'
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class,'user_id');

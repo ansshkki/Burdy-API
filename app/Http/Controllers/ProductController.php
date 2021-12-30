@@ -7,6 +7,7 @@ use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 
@@ -58,8 +59,9 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-
-        return response($product, 200);
+        //return $product;
+        $product['user']=$product->user;
+        return response()->json($product, 200);
 
     }
 
@@ -81,8 +83,8 @@ class ProductController extends Controller
             'price' => 'numeric',
             'periods' => 'JSON',
             'quantity' => 'numeric',
-            'image'=>'File'
         ]);
+        $request->validate(['image'=>'File']);
 
         $product->update($fields);
         return response(Product::find($product->id), 200);
@@ -103,5 +105,42 @@ class ProductController extends Controller
         //$product->destroy();
         Product::destroy($product->id);
         return response(true, 200);
+    }
+
+    /**
+     * Display the filtered resources.
+     * 
+     * @param Request $request
+     * @param  Product $product
+     * @return Response
+     */
+    public function search(Request $request)
+    {
+        $request->validate([
+            'name' => 'string',
+            'category_id' => 'numeric',
+            'upPrice' => 'numeric',
+            'downPrice' => 'numeric',
+            'expiration_date' => 'Date',
+        ]);
+        $products = Product::query();
+        if($request->name){
+            $products = $products->where('name','like','%'.$request->name.'%');
+        }
+        if($request->category_id){
+            $products = $products->where('category_id',$request->category_id);
+        }
+        if($request->upPrice){
+            $products = $products->where('price','<=',$request->upPrice);
+        }
+        if($request->downPrice){
+            $products = $products->where('price','>=',$request->downPrice);
+        }
+        
+        if($request->expiration_date){
+            $products = $products->whereDate('expiration_date','<=',$request->expiration_date);
+        }
+        return ($products->get());
+
     }
 }
