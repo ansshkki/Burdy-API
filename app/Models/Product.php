@@ -37,7 +37,7 @@ class Product extends Model
         'description'
     ];
 
-    protected $withCount = ['comments'];
+    protected $withCount = ['comments','likes'];
 
     public function currentPrice()
     {
@@ -71,8 +71,8 @@ class Product extends Model
         return $this->hasMany(Comment::class);
     }
 
-    /*public function likes()
+    public function likes()
     {
-        return $this->hasMany();
-    }*/
+        return $this->hasMany(Like::class);
+    }
 }

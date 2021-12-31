@@ -61,6 +61,8 @@ class ProductController extends Controller
         $product->increment('views');
         $product['current_price'] = $product->currentPrice();
         $product['user'] = $product->user;
+        $product['comments'] = $product->comments()->get();
+        $product['likes'] = $product->likes()->get();
         return response($product, 200);
     }
 
