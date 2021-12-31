@@ -36,14 +36,17 @@ class ProductController extends Controller
             'periods' => 'required|JSON',
             'quantity' => 'required|numeric',
             'category_id' => 'required|Numeric',
-            'image' => 'required|file',
         ]);
-        $images_url = '/storage/app/';
-        $fields['user_id'] = $request->user()->id;
-        $path = $request->file('image')->storeAs('images', time() . '.' . $request->file('image')->getClientOriginalExtension());
-        $fields['image_url'] = $images_url . $path;
-        $product = Product::create($fields);
+        $request->validate(['image' => 'required|file']);
 
+        $image = $request->file('image');
+        $image_name = time() . '.' . $image->getClientOriginalExtension();
+        $image->storeAs('public/images', $image_name);
+
+        $fields['user_id'] = $request->user()->id;
+        $fields['image_url'] = '/storage/images/' . $image_name;
+
+        $product = Product::create($fields);
         return response($product, 201);
     }
 
@@ -79,7 +82,7 @@ class ProductController extends Controller
             'periods' => 'JSON',
             'quantity' => 'numeric',
         ]);
-        $request->validate(['image'=>'File']);
+        $request->validate(['image' => 'File']);
 
         $product->update($fields);
         return response($product, 200);
@@ -105,7 +108,7 @@ class ProductController extends Controller
      * Display the filtered resources.
      *
      * @param Request $request
-     * @param  Product $product
+     * @param Product $product
      * @return Response
      */
     public function search(Request $request)
@@ -118,21 +121,21 @@ class ProductController extends Controller
             'expiration_date' => 'Date',
         ]);
         $products = Product::query();
-        if($request->name){
-            $products = $products->where('name','like','%'.$request->name.'%');
+        if ($request->name) {
+            $products = $products->where('name', 'like', '%' . $request->name . '%');
         }
-        if($request->category_id){
-            $products = $products->where('category_id',$request->category_id);
+        if ($request->category_id) {
+            $products = $products->where('category_id', $request->category_id);
         }
-        if($request->upPrice){
-            $products = $products->where('price','<=',$request->upPrice);
+        if ($request->upPrice) {
+            $products = $products->where('price', '<=', $request->upPrice);
         }
-        if($request->downPrice){
-            $products = $products->where('price','>=',$request->downPrice);
+        if ($request->downPrice) {
+            $products = $products->where('price', '>=', $request->downPrice);
         }
 
-        if($request->expiration_date){
-            $products = $products->whereDate('expiration_date','<=',$request->expiration_date);
+        if ($request->expiration_date) {
+            $products = $products->whereDate('expiration_date', '<=', $request->expiration_date);
         }
         return ($products->get());
 
