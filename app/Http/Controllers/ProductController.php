@@ -28,7 +28,6 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-
         $fields = $request->validate([
             'name' => 'required|string',
             'expiration_date' => 'required|date',
@@ -58,7 +57,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        $product->update(["views" => $product->views + 1]);
+        $product->increment('views');
         $product['current_price'] = $product->currentPrice();
         $product['user'] = $product->user;
         return response($product, 200);
@@ -108,7 +107,6 @@ class ProductController extends Controller
      * Display the filtered resources.
      *
      * @param Request $request
-     * @param Product $product
      * @return Response
      */
     public function search(Request $request)
@@ -138,6 +136,5 @@ class ProductController extends Controller
             $products = $products->whereDate('expiration_date', '<=', $request->expiration_date);
         }
         return ($products->get());
-
     }
 }
