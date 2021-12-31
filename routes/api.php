@@ -11,7 +11,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // Unprotected Routes
 Route::prefix('/user')->group(function () {
-    Route::get('/', [AuthController::class, 'all']);
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
 });
@@ -21,6 +20,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/user/logout', [AuthController::class, 'logout']);
 
     Route::apiResource('products', 'ProductController');
+    Route::apiResource('products.comments', 'CommentController')->except(['show', 'update']);
+
     Route::prefix('/products')->group(function () {
         Route::post('/search', [ProductController::class, 'search']);
         Route::post('/sort', [ProductController::class, 'sort']);

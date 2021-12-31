@@ -7,6 +7,7 @@ use App\Models\Product;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
@@ -72,7 +73,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        if ($request->user()->id != $product->user_id) {
+        if (Auth::id() != $product->user_id) {
             return response(['message' => 'Unauthorized'], 401);
         }
         $fields = $request->validate([
@@ -94,9 +95,9 @@ class ProductController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function destroy(Product $product, Request $request)
+    public function destroy(Product $product)
     {
-        if ($request->user()->id != $product->user_id) {
+        if (Auth::id() != $product->user_id) {
             return response(['message' => 'Unauthorized'], 401);
         }
         Product::destroy($product->id);
