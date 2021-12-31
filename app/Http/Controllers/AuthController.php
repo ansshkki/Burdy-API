@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -25,8 +25,7 @@ class AuthController extends Controller
             'phone' => $fields['phone'],
         ]);
 
-        $token = $user->createToken('myapptoken')->plainTextToken;
-
+        $token = $user->createToken('authToken')->plainTextToken;
         $response = [
             'user' => $user,
             'token' => $token
@@ -42,16 +41,15 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        $user = User::where('email', $fields['email'])->first();
+        $user = User::firstWhere('email', $fields['email']);
 
-        if ($user == null || !Hash::check($fields['password'], $user->password)) {
+        if (!$user or !Auth::attempt($fields)) {
             return response()->json([
                 'message' => 'Invalid credentials',
             ], 401);
         }
 
         $token = $user->createToken('authToken')->plainTextToken;
-
         $response = [
             'user' => $user,
             'token' => $token,
@@ -61,13 +59,7 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        //auth()->user()->tokens()->delete();
         $request->user()->currentAccessToken()->delete();
         return ['message' => 'logged out'];
-    }
-
-    public function all()
-    {
-        return User::all();
     }
 }

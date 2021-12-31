@@ -23,7 +23,7 @@ class CreateProductsTable extends Migration
             $table->text('periods');
             $table->integer('quantity')->default(1);
             $table->integer('views')->default(0);
-            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             // $table->foreignId('comment')->constrained('comment');
             // $table->foreignId('like')->constrained('like');
             $table->foreignId('category_id')->constrained('categories');

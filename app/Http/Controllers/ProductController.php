@@ -4,12 +4,9 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Product;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -39,30 +36,29 @@ class ProductController extends Controller
             'periods' => 'required|JSON',
             'quantity' => 'required|numeric',
             'category_id' => 'required|Numeric',
+            'image' => 'required|file',
         ]);
-        $request->validate(['image'=>'required|File']);
-        $images_url ='/storage/app/' ;
-        $fields['user_id']= $request->user()->id;
+        $images_url = '/storage/app/';
+        $fields['user_id'] = $request->user()->id;
         $path = $request->file('image')->
-            storeAs('images',time().'.'.$request->file('image')->getClientOriginalExtension());
-        $fields['image_url']=$images_url.$path;
-        Product::create($fields);
+        storeAs('images', time() . '.' . $request->file('image')->getClientOriginalExtension());
+        $fields['image_url'] = $images_url . $path;
+        $product = Product::create($fields);
 
-        return response(true, 201);
+        return response($product, 201);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  Product $product
+     * @param Product $product
      * @return Response
      */
     public function show(Product $product)
     {
-        //return $product;
+        $product->update(["views" => $product->views + 1]);
         $product['user']=$product->user;
-        return response()->json($product, 200);
-
+        return response($product, 200);
     }
 
     /**
@@ -74,9 +70,8 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        //return $request->user();
-        if($request->user()->id!=$product->user_id){
-            return response()->json(['message'=> 'Unauthorized'],401);
+        if ($request->user()->id != $product->user_id) {
+            return response(['message' => 'Unauthorized'], 401);
         }
         $fields = $request->validate([
             'name' => 'string',
@@ -87,7 +82,7 @@ class ProductController extends Controller
         $request->validate(['image'=>'File']);
 
         $product->update($fields);
-        return response(Product::find($product->id), 200);
+        return response($product, 200);
     }
 
     /**
@@ -99,12 +94,11 @@ class ProductController extends Controller
      */
     public function destroy(Product $product, Request $request)
     {
-        if($request->user()->id!=$product->user_id){
-            return response()->json(['message'=> 'Unauthorized'],401);
+        if ($request->user()->id != $product->user_id) {
+            return response(['message' => 'Unauthorized'], 401);
         }
-        //$product->destroy();
         Product::destroy($product->id);
-        return response(true, 200);
+        return response("true", 200);
     }
 
     /**
