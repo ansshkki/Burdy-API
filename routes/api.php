@@ -20,8 +20,9 @@ Route::prefix('/user')->group(function () {
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/user/logout', [AuthController::class, 'logout']);
 
-    Route::apiResource('products', 'ProductController');
-    Route::post('/products/search', [ProductController::class, 'search']);
-    Route::post('/products/sort', [ProductController::class, 'sort']);
-
+    Route::prefix('products')->group(function () {
+        Route::apiResource('/', 'ProductController');
+        Route::post('/search', [ProductController::class, 'search']);
+        Route::post('/sort', [ProductController::class, 'sort']);
+    });
 });

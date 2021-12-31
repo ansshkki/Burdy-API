@@ -40,8 +40,7 @@ class ProductController extends Controller
         ]);
         $images_url = '/storage/app/';
         $fields['user_id'] = $request->user()->id;
-        $path = $request->file('image')->
-        storeAs('images', time() . '.' . $request->file('image')->getClientOriginalExtension());
+        $path = $request->file('image')->storeAs('images', time() . '.' . $request->file('image')->getClientOriginalExtension());
         $fields['image_url'] = $images_url . $path;
         $product = Product::create($fields);
 
@@ -57,7 +56,8 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         $product->update(["views" => $product->views + 1]);
-        $product['user']=$product->user;
+        $product['current_price'] = $product->currentPrice();
+        $product['user'] = $product->user;
         return response($product, 200);
     }
 
@@ -103,7 +103,7 @@ class ProductController extends Controller
 
     /**
      * Display the filtered resources.
-     * 
+     *
      * @param Request $request
      * @param  Product $product
      * @return Response
@@ -130,7 +130,7 @@ class ProductController extends Controller
         if($request->downPrice){
             $products = $products->where('price','>=',$request->downPrice);
         }
-        
+
         if($request->expiration_date){
             $products = $products->whereDate('expiration_date','<=',$request->expiration_date);
         }

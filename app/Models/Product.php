@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use DateTime;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Date;
 use Laravel\Sanctum\HasApiTokens;
 
 class Product extends Model
@@ -34,6 +36,23 @@ class Product extends Model
         'updated_at',
         'description'
     ];
+
+    public function currentPrice()
+    {
+        $now = Date::now();
+        if ($now >= Date::createFromFormat('Y-m-d', $this->expiration_date)) {
+            return 0.0;
+        }
+        $pJson = json_decode($this->periods);
+        foreach ($pJson as $period) {
+            $date = DateTime::createFromFormat('Y-m-d\TH:i:s+', $period->date);
+            $sale = (float)$period->sale;
+            if ($now >= $date) {
+                return $this->price * (1 - $sale);
+            }
+        }
+        return $this->price;
+    }
 
     public function user()
     {
