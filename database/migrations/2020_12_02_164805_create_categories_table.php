@@ -21,8 +21,8 @@ class CreateCategoriesTable extends Migration
         });
 
         Category::create(["name" => "Sport"]);
-        Category::create(["name" => "Food"]);
         Category::create(["name" => "Technology"]);
+        Category::create(["name" => "Food"]);
         Category::create(["name" => "Other"]);
     }
 
