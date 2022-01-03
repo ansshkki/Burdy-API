@@ -20,6 +20,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/user/logout', [AuthController::class, 'logout']);
 
     Route::apiResource('products', 'ProductController');
+    Route::post('/products/get', [ProductController::class , 'getUserProduct']);
     Route::apiResource('products.comments', 'CommentController')->except(['show', 'update']);
     Route::apiResource('products.likes', 'LikeController')->except(['show', 'update','destroy']);
 

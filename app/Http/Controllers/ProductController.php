@@ -22,6 +22,16 @@ class ProductController extends Controller
     }
 
     /**
+     * Display a listing of the specified userresource.
+     *
+     * @return Collection|Product[]
+     */
+    public function getUserProducts()
+    {
+        return Product::where('user_id',Auth::id());
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param Request $request

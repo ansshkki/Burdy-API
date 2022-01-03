@@ -26,7 +26,7 @@ class CreateProductsTable extends Migration
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             // $table->foreignId('comment')->constrained('comment');
             // $table->foreignId('like')->constrained('like');
-            $table->foreignId('category_id')->constrained('categories');
+            $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
             $table->timestamps();
         });
     }
