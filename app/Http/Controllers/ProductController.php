@@ -132,10 +132,10 @@ class ProductController extends Controller
             'expiration_date' => 'Date',
         ]);
         $products = Product::query();
-        if ($request->name) {
+        if ($request->name!='zzzzzz') {
             $products = $products->where('name', 'like', '%' . $request->name . '%');
         }
-        if ($request->category_id) {
+        if ($request->category_id!=6) {
             $products = $products->where('category_id', $request->category_id);
         }
         if ($request->upPrice) {
