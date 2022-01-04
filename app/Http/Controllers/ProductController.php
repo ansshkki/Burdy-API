@@ -134,12 +134,14 @@ class ProductController extends Controller
         $products = Product::query();
         if ($request->name!='zzzzzz') {
             $products = $products->where('name', 'like', '%' . $request->name . '%');
+            //return $products->get();
         }
         if ($request->category_id!=6) {
             $products = $products->where('category_id', $request->category_id);
         }
         if ($request->upPrice) {
             $products = $products->where('price', '<=', $request->upPrice);
+            return $products->get();
         }
         if ($request->downPrice) {
             $products = $products->where('price', '>=', $request->downPrice);
@@ -152,9 +154,13 @@ class ProductController extends Controller
     }
 
     public function sort(Request $request){
-        $sortBy = ['','name','price','category_id'];
-        $id = $request->validate(['id'=>'numeric']);
-        if(!$id){return response(Product::all());}
-        return Product::orderBy($sortBy[$id],'asc');
+        //$sortBy = {'','name','price','category_id'};
+        $id = $request-> validate(['id'=>'numeric']);
+        if($id==0){return response(Product::all());}
+        else if($id==1)
+        return Product::orderBy('name','asc')->get();
+        else{
+            return Product::orderBy('price','asc')->get();
+        }
     }
 }
