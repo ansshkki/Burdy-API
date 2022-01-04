@@ -160,15 +160,15 @@ class ProductController extends Controller
     public function sort(Request $request){
         //$sortBy = {'','name','price','category_id'};
         $products = Product::all();
-        $id = $request-> validate(['id'=>'numeric']);
+        $fields = $request-> validate(['id'=>'numeric']);
         
-        if($id==0){$products =$products->sortBy('expiration_date');}
-        else if($id==1)
-            $products = $products->sortBy('name');
+        if($fields['id']==0){return Product::orderBy('expiration_date')->get();}
+        else if($fields['id']==1)
+            return Product::orderBy('name')->get();
         else{
-            $products = $products->sortBy('price');
+            return Product::orderBy('price')->get();
         }
-      //  $products = $products->values();
-        return $products;
+        //$products = $products->values();
+        //return $products->get();
     }
 }
