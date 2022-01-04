@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Product;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -18,6 +19,9 @@ class ProductController extends Controller
      */
     public function index()
     {
+        
+
+       // Product::where()
         return Product::all();
     }
 
@@ -155,12 +159,16 @@ class ProductController extends Controller
 
     public function sort(Request $request){
         //$sortBy = {'','name','price','category_id'};
+        $products = Product::all();
         $id = $request-> validate(['id'=>'numeric']);
-        if($id==0){return response(Product::all());}
+        
+        if($id==0){$products =$products->sortBy('expiration_date');}
         else if($id==1)
-        return Product::orderBy('name','asc')->get();
+            $products = $products->sortBy('name');
         else{
-            return Product::orderBy('price','asc')->get();
+            $products = $products->sortBy('price');
         }
+      //  $products = $products->values();
+        return $products;
     }
 }
