@@ -150,4 +150,11 @@ class ProductController extends Controller
         }
         return ($products->get());
     }
+
+    public function sort(Request $request){
+        $sortBy = ['','name','price','category_id'];
+        $id = $request->validate(['id'=>'numeric']);
+        if(!$id){return response(Product::all());}
+        return Product::orderBy($sortBy[$id],'asc');
+    }
 }
