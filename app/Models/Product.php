@@ -42,7 +42,7 @@ class Product extends Model
 
     protected $appends = ['current_price', 'is_liked'];
 
-    protected $withCount = ['comments','likes'];
+    protected $withCount = ['comments', 'likes'];
 
     public function getCurrentPriceAttribute()
     {
@@ -52,17 +52,23 @@ class Product extends Model
         }
         $pJson = json_decode($this->periods);
         foreach ($pJson as $period) {
-            $date = DateTime::createFromFormat('Y-m-d\TH:i:s+', $period->date);
+            $date = DateTime::createFromFormat('Y-m-d', $period->date);
             $sale = (float)$period->sale;
             if ($now >= $date) {
-                return $this->price * (1 - $sale);
+                return $this->price * ((100 - $sale) / 100.0);
             }
         }
         return $this->price;
     }
 
-    public function getIsLikedAttribute() {
+    public function getIsLikedAttribute()
+    {
         return $this->likes()->where('user_id', Auth::id())->exists() ? 1 : 0;
+    }
+
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
     }
 
     public function user()
@@ -78,10 +84,5 @@ class Product extends Model
     public function comments()
     {
         return $this->hasMany(Comment::class);
-    }
-
-    public function likes()
-    {
-        return $this->hasMany(Like::class);
     }
 }
