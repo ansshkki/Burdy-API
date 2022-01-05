@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Product;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -19,9 +18,9 @@ class ProductController extends Controller
      */
     public function index()
     {
-        
 
-       // Product::where()
+
+        // Product::where()
         return Product::all();
     }
 
@@ -32,7 +31,7 @@ class ProductController extends Controller
      */
     public function getUserProducts()
     {
-        return Product::where('user_id',Auth::id());
+        return Product::where('user_id', Auth::id())->get();
     }
 
     /**
@@ -73,10 +72,6 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         $product->increment('views');
-        $product['current_price'] = $product->currentPrice();
-        $product['user'] = $product->user;
-        $product['comments'] = $product->comments()->get();
-        $product['likes'] = $product->likes()->get();
         return response($product, 200);
     }
 
@@ -136,11 +131,11 @@ class ProductController extends Controller
             'expiration_date' => 'Date',
         ]);
         $products = Product::query();
-        if ($request->name && $request->name!='zzzzzz') {
+        if ($request->name && $request->name != 'zzzzzz') {
             $products = $products->where('name', 'like', '%' . $request->name . '%');
-            
+
         }
-        if ($request->category_id && $request->category_id!=6) {
+        if ($request->category_id && $request->category_id != 6) {
             $products = $products->where('category_id', $request->category_id);
         }
         if ($request->upPrice) {
@@ -157,15 +152,17 @@ class ProductController extends Controller
         return ($products->get());
     }
 
-    public function sort(Request $request){
+    public function sort(Request $request)
+    {
         //$sortBy = {'','name','price','category_id'};
         $products = Product::all();
-        $fields = $request-> validate(['id'=>'numeric']);
-        
-        if($fields['id']==0){return Product::orderBy('expiration_date')->get();}
-        else if($fields['id']==1)
+        $fields = $request->validate(['id' => 'numeric']);
+
+        if ($fields['id'] == 0) {
+            return Product::orderBy('expiration_date')->get();
+        } else if ($fields['id'] == 1)
             return Product::orderBy('name')->get();
-        else{
+        else {
             return Product::orderBy('price')->get();
         }
         //$products = $products->values();

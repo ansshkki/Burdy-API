@@ -5,6 +5,7 @@ namespace App\Models;
 use DateTime;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -37,9 +38,13 @@ class Product extends Model
         'description'
     ];
 
+    protected $with = ['user', 'likes', 'comments'];
+
+    protected $appends = ['current_price', 'is_liked'];
+
     protected $withCount = ['comments','likes'];
 
-    public function currentPrice()
+    public function getCurrentPriceAttribute()
     {
         $now = Date::now();
         if ($now >= Date::createFromFormat('Y-m-d', $this->expiration_date)) {
@@ -54,6 +59,10 @@ class Product extends Model
             }
         }
         return $this->price;
+    }
+
+    public function getIsLikedAttribute() {
+        return $this->likes()->where('user_id', Auth::id())->exists() ? 1 : 0;
     }
 
     public function user()
