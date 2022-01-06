@@ -28,6 +28,7 @@ class LikeController extends Controller
     {
         if($product->likes()->where('user_id',Auth::id())->exists()){
             $product->likes()->where('user_id',Auth::id())->delete();
+            return response()->json('removed');
         }else{
         $product->likes()->create(['user_id'=>Auth::id()]);
         }
