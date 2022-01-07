@@ -39,7 +39,7 @@ class Product extends Model
         'periods',
     ];
 
-    protected $with = ['user', 'likes', 'comments'];
+    protected $with = ['user'];
 
     protected $appends = ['current_price', 'current_sale', 'is_liked'];
 
