@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -18,19 +19,18 @@ class ProductController extends Controller
      */
     public function index()
     {
-
-
-        // Product::where()
+        Product::checkDate();
         return Product::all();
     }
 
     /**
-     * Display a listing of the specified userresource.
+     * Display a listing of the specified user resource.
      *
      * @return Collection|Product[]
      */
     public function getUserProducts()
     {
+        Product::checkDate();
         return Product::where('user_id', Auth::id())->get();
     }
 
@@ -57,8 +57,8 @@ class ProductController extends Controller
         $image->storeAs('public/images', $image_name);
 
         $fields['user_id'] = $request->user()->id;
-        $fields['image_url'] = '/storage/images/' . $image_name;
-
+        //$fields['image_url'] = '/storage/images/' . $image_name;
+        $fields['image_url'] = Storage::url($image_name);
         $product = Product::create($fields);
         return response($product, 201);
     }
@@ -110,7 +110,8 @@ class ProductController extends Controller
     {
         if (Auth::id() != $product->user_id) {
             return response(['message' => 'Unauthorized'], 401);
-        }
+        }  
+        Storage::delete('public/images/'.basename($product->image_url));
         Product::destroy($product->id);
         return response("true", 200);
     }
@@ -123,6 +124,7 @@ class ProductController extends Controller
      */
     public function search(Request $request)
     {
+        Product::checkDate();
         $request->validate([
             'name' => 'string',
             'category_id' => 'numeric',
@@ -154,18 +156,10 @@ class ProductController extends Controller
 
     public function sort(Request $request)
     {
-        //$sortBy = {'','name','price','category_id'};
+        $sortBy = ['expiration_date','name','current_price','category_id'];
+        Product::checkDate();
         $products = Product::all();
         $fields = $request->validate(['id' => 'numeric']);
-
-        if ($fields['id'] == 0) {
-            return Product::orderBy('expiration_date')->get();
-        } else if ($fields['id'] == 1)
-            return Product::orderBy('name')->get();
-        else {
-            return Product::orderBy('price')->get();
-        }
-        //$products = $products->values();
-        //return $products->get();
+        return $products->sortBy($sortBy[$fields['id']])->values();
     }
 }

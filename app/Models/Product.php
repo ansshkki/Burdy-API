@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 
 class Product extends Model
@@ -64,6 +65,14 @@ class Product extends Model
     public function getIsLikedAttribute()
     {
         return $this->likes()->where('user_id', Auth::id())->exists() ? 1 : 0;
+    }
+
+    public static function checkDate(){
+        $expiredProducts = Product::where('expiration_date', '<' , Date::now());
+        foreach ($expiredProducts as $product){
+            Storage::delete('public/images/'.basename($product->image_url));
+        }
+        Product::where('expiration_date', '<' , Date::now())->delete();
     }
 
     public function likes()
