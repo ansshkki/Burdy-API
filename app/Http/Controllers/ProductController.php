@@ -57,8 +57,7 @@ class ProductController extends Controller
         $image->storeAs('public/images', $image_name);
 
         $fields['user_id'] = $request->user()->id;
-        //$fields['image_url'] = '/storage/images/' . $image_name;
-        $fields['image_url'] = Storage::url($image_name);
+        $fields['image_url'] = '/storage/images/' . $image_name;
         $product = Product::create($fields);
         return response($product, 201);
     }
