@@ -45,6 +45,15 @@ class Product extends Model
 
     protected $withCount = ['comments', 'likes'];
 
+    public static function checkDate()
+    {
+        $expiredProducts = Product::where('expiration_date', '<', Date::now());
+        foreach ($expiredProducts as $product) {
+            Storage::delete('public/images/' . basename($product->image_url));
+        }
+        Product::where('expiration_date', '<', Date::now())->delete();
+    }
+
     public function getCurrentPriceAttribute()
     {
         $now = Date::now();
@@ -65,14 +74,6 @@ class Product extends Model
     public function getIsLikedAttribute()
     {
         return $this->likes()->where('user_id', Auth::id())->exists() ? 1 : 0;
-    }
-
-    public static function checkDate(){
-        $expiredProducts = Product::where('expiration_date', '<' , Date::now());
-        foreach ($expiredProducts as $product){
-            Storage::delete('public/images/'.basename($product->image_url));
-        }
-        Product::where('expiration_date', '<' , Date::now())->delete();
     }
 
     public function likes()

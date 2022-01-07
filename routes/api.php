@@ -21,7 +21,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::apiResource('products', 'ProductController');
     Route::apiResource('products.comments', 'CommentController')->except(['show', 'update']);
-    Route::apiResource('products.likes', 'LikeController')->except(['show', 'update','destroy']);
+    Route::apiResource('products.likes', 'LikeController')->except(['show', 'update', 'destroy']);
 
     Route::prefix('/products')->group(function () {
         Route::post('/get', [ProductController::class, 'getUserProducts']);
