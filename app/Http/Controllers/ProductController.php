@@ -94,6 +94,13 @@ class ProductController extends Controller
             'quantity' => 'numeric',
         ]);
         $request->validate(['image' => 'File']);
+        if($fields['name'] == 'zzzzzz' ){
+            $fields['name'] = $product->name;
+        }
+
+        if($fields['quantity'] == 123454321 ){
+            $fields['quantity'] = $product->quantity;
+        }
 
         $product->update($fields);
         return response($product, 200);
