@@ -36,43 +36,53 @@ class Product extends Model
     protected $hidden = [
         'created_at',
         'updated_at',
-        'description'
+        'periods',
     ];
 
-    protected $with = ['user', 'likes', 'comments'];
+    protected $with = ['user'];
 
-    protected $appends = ['current_price', 'is_liked'];
+    protected $appends = ['current_price', 'current_sale', 'is_liked'];
 
     protected $withCount = ['comments', 'likes'];
 
+    public static function checkDate()
+    {
+        $expiredProducts = Product::where('expiration_date', '<', Date::now());
+        foreach ($expiredProducts as $product) {
+            Storage::delete('public/images/' . basename($product->image_url));
+        }
+        Product::where('expiration_date', '<', Date::now())->delete();
+    }
+
     public function getCurrentPriceAttribute()
     {
+        return $this->currentPeriod()['current_price'];
+    }
+
+    private function currentPeriod(): array
+    {
         $now = Date::now();
-        if ($now >= Date::createFromFormat('Y-m-d', $this->expiration_date)) {
-            return 0.0;
-        }
         $pJson = json_decode($this->periods);
+        $currentPrice = $this->price;
+        $sale = 0.0;
         foreach ($pJson as $period) {
             $date = DateTime::createFromFormat('Y-m-d', $period->date);
             $sale = (float)$period->sale;
             if ($now >= $date) {
-                return $this->price * ((100 - $sale) / 100.0);
+                $currentPrice = $this->price * ((100 - $sale) / 100.0);
             }
         }
-        return $this->price;
+        return ['current_price' => $currentPrice, 'current_sale' => $sale];
+    }
+
+    public function getCurrentSaleAttribute()
+    {
+        return $this->currentPeriod()['current_sale'];
     }
 
     public function getIsLikedAttribute()
     {
         return $this->likes()->where('user_id', Auth::id())->exists() ? 1 : 0;
-    }
-
-    public static function checkDate(){
-        $expiredProducts = Product::where('expiration_date', '<' , Date::now());
-        foreach ($expiredProducts as $product){
-            Storage::delete('public/images/'.basename($product->image_url));
-        }
-        Product::where('expiration_date', '<' , Date::now())->delete();
     }
 
     public function likes()

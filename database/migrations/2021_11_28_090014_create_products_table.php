@@ -16,7 +16,6 @@ class CreateProductsTable extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('description')->nullable();
             $table->text('image_url');
             $table->date('expiration_date');
             $table->double('price');
@@ -24,8 +23,6 @@ class CreateProductsTable extends Migration
             $table->integer('quantity')->default(1);
             $table->integer('views')->default(0);
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            // $table->foreignId('comment')->constrained('comment');
-            // $table->foreignId('like')->constrained('like');
             $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
             $table->timestamps();
         });

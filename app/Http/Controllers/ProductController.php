@@ -57,8 +57,7 @@ class ProductController extends Controller
         $image->storeAs('public/images', $image_name);
 
         $fields['user_id'] = $request->user()->id;
-        //$fields['image_url'] = '/storage/images/' . $image_name;
-        $fields['image_url'] = Storage::url($image_name);
+        $fields['image_url'] = '/storage/images/' . $image_name;
         $product = Product::create($fields);
         return response($product, 201);
     }
@@ -117,8 +116,8 @@ class ProductController extends Controller
     {
         if (Auth::id() != $product->user_id) {
             return response(['message' => 'Unauthorized'], 401);
-        }  
-        Storage::delete('public/images/'.basename($product->image_url));
+        }
+        Storage::delete('public/images/' . basename($product->image_url));
         Product::destroy($product->id);
         return response("true", 200);
     }
@@ -163,7 +162,7 @@ class ProductController extends Controller
 
     public function sort(Request $request)
     {
-        $sortBy = ['expiration_date','name','current_price','category_id'];
+        $sortBy = ['expiration_date', 'name', 'current_price', 'category_id'];
         Product::checkDate();
         $products = Product::all();
         $fields = $request->validate(['id' => 'numeric']);

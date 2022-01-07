@@ -15,25 +15,25 @@ class LikeController extends Controller
      */
     public function index(Product $product)
     {
-        return response($product->likes,200); 
+        return response($product->likes, 200);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request,Product $product)
+    public function store(Request $request, Product $product)
     {
-        if($product->likes()->where('user_id',Auth::id())->exists()){
-            $product->likes()->where('user_id',Auth::id())->delete();
+        if ($product->likes()->where('user_id', Auth::id())->exists()) {
+            $product->likes()->where('user_id', Auth::id())->delete();
             return response()->json('removed');
-        }else{
-        $product->likes()->create(['user_id'=>Auth::id()]);
+        } else {
+            $product->likes()->create(['user_id' => Auth::id()]);
         }
-        return response('created',201);
+        return response('created', 201);
     }
 
-   
+
 }
